@@ -84,6 +84,36 @@ class TransactionHistory {
     return sorted.sublist(start, end);
   }
 
+  /// One CSV row per transaction, newest first, with a header row.
+  /// Fields containing a comma, quote or newline are quoted per RFC 4180.
+  String toCsv() {
+    final lines = <String>[
+      'id,timestamp,type,status,from,to,asset,amount,fee,memo',
+    ];
+    for (final tx in all) {
+      lines.add([
+        tx.id,
+        tx.timestamp.toIso8601String(),
+        tx.type.name,
+        tx.status.name,
+        tx.from,
+        tx.to,
+        tx.asset.symbol,
+        tx.amount.toString(),
+        tx.fee.toString(),
+        tx.memo ?? '',
+      ].map(_csvField).join(','));
+    }
+    return lines.join('\n');
+  }
+
+  static String _csvField(String value) {
+    if (value.contains(RegExp(r'[",\n\r]'))) {
+      return '"${value.replaceAll('"', '""')}"';
+    }
+    return value;
+  }
+
   Map<String, Object?> toJson() => {
         'transactions': all.map((tx) => tx.toJson()).toList(),
       };
