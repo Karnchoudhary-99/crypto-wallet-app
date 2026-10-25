@@ -9,7 +9,7 @@ transactions — built as a dependency-light Dart package with a CLI demo.
 ## Roadmap
 
 - [x] Project scaffold (Dart package layout, CI, wallet model + CLI demo)
-- [ ] Key management (seed phrases, key derivation)
+- [x] Key management (seed phrases, key derivation, password keystore)
 - [ ] Multi-asset balances + transaction history
 - [ ] Transaction building + signing
 - [ ] Local encrypted storage + import/export
@@ -21,7 +21,31 @@ transactions — built as a dependency-light Dart package with a CLI demo.
 dart pub get
 dart test
 dart run crypto_wallet_app 0x742d35Cc6634C0532925a3b844Bc454e4438f44e 1500000000000000000
+dart run crypto_wallet_app new
+dart run crypto_wallet_app derive "apple banana cherry mango lemon grape peach pear plum melon kiwi golden" 0
 ```
+
+## Key management
+
+- **Seed phrases** (`lib/src/seed_phrase.dart`): 12 or 24 words from a
+  custom 128-word list (`lib/src/wordlist.dart`), with a checksum word
+  (last word = sum of earlier word indices mod 128). Phrases are
+  validated on construction; tampered or unknown words are rejected.
+- **Key derivation** (`lib/src/derivation.dart`): deterministic per
+  phrase + account index. The master key is HMAC-SHA512 of the phrase
+  seed; account *i* is SHA-256 of the master key plus the index.
+  Addresses are the last 20 bytes of SHA-256 of the private key, in
+  `0x` + 40-hex form, so they plug into the existing `Wallet` model.
+- **Keystore** (`lib/src/keystore.dart`): a 32-byte private key stored
+  as JSON with a random salt, an XOR keystream from a 1000-times
+  iterated SHA-256 password key, and a SHA-256 MAC. Decryption with a
+  wrong password or tampered ciphertext fails on the MAC check.
+
+**Honest limits:** this is NOT BIP-39, NOT BIP-32, and NOT a real
+Ethereum address (no secp256k1, no keccak-256). Nothing derived here
+can be imported into a real wallet, and the keystore is demo-grade
+encryption, not AES-GCM. The point is a complete, tested key-management
+shape — generation, derivation, storage — not custody of real funds.
 
 ## License
 
