@@ -9,8 +9,8 @@ class Wallet {
     if (!isValidAddress(address)) {
       throw ArgumentError('Invalid wallet address: $address');
     }
-    if (balance < 0) {
-      throw ArgumentError('Balance cannot be negative: $balance');
+    if (this.balance < BigInt.zero) {
+      throw ArgumentError('Balance cannot be negative: ${this.balance}');
     }
   }
 
