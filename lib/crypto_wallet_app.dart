@@ -19,5 +19,6 @@ export 'src/derivation.dart';
 export 'src/hex.dart';
 export 'src/keystore.dart';
 export 'src/seed_phrase.dart';
+export 'src/signing.dart';
 export 'src/wallet.dart';
 export 'src/wordlist.dart';
