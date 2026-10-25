@@ -4,6 +4,7 @@ void _printUsage() {
   print('Usage:');
   print('  dart run crypto_wallet_app <0x-address> [balance-in-wei]');
   print('  dart run crypto_wallet_app balances');
+  print('  dart run crypto_wallet_app history');
   print('  dart run crypto_wallet_app new');
   print('  dart run crypto_wallet_app derive "<seed phrase>" <index>');
   print('');
@@ -28,6 +29,52 @@ void main(List<String> arguments) {
     for (final balance in portfolio.balances) {
       print('  ${balance.formattedAmount} ${balance.asset.symbol}');
     }
+    return;
+  }
+  if (arguments[0] == 'history') {
+    final history = TransactionHistory();
+    const alice = '0x742d35Cc6634C0532925a3b844Bc454e4438f44e';
+    const bob = '0x1111111111111111111111111111111111111111';
+    history.add(
+      WalletTransaction(
+        id: 'demo-1',
+        from: alice,
+        to: bob,
+        asset: Asset.native,
+        amount: BigInt.parse('1000000000000000000'),
+        fee: BigInt.parse('10000000000000000'),
+        type: TxType.send,
+        status: TxStatus.confirmed,
+        timestamp: DateTime.utc(2026, 10, 25, 12),
+        memo: 'invoice 42',
+      ),
+    );
+    history.add(
+      WalletTransaction(
+        id: 'demo-2',
+        from: bob,
+        to: alice,
+        asset: Asset(symbol: 'USDC', name: 'USD Coin', decimals: 6),
+        amount: BigInt.from(250000000),
+        type: TxType.receive,
+        status: TxStatus.confirmed,
+        timestamp: DateTime.utc(2026, 10, 25, 14),
+        memo: 'refund',
+      ),
+    );
+    print('Sample history (newest first):');
+    for (final tx in history.all) {
+      print(
+        '  ${tx.id} ${tx.type.name} '
+        '${AssetBalance(asset: tx.asset, amount: tx.amount).formattedAmount} '
+        '${tx.asset.symbol} ${tx.status.name}',
+      );
+    }
+    final summary = HistorySummary(history);
+    print(
+      'Summary: ${summary.confirmedCount} confirmed, '
+      'sent ${summary.sentByAsset}, received ${summary.receivedByAsset}',
+    );
     return;
   }
   if (arguments[0] == 'new') {

@@ -1,5 +1,6 @@
 import 'asset.dart';
 import 'asset_balance.dart';
+import 'transaction.dart';
 
 /// The set of assets one wallet holds, keyed by asset symbol.
 ///
@@ -60,6 +61,28 @@ class Portfolio {
 
   void subtractAmount(Asset asset, BigInt amount) =>
       subtract(AssetBalance(asset: asset, amount: amount));
+
+  /// Applies a confirmed transaction involving [ownAddress] to the
+  /// holdings: a confirmed send debits amount + fee, a confirmed
+  /// receive credits the amount. Pending transactions are ignored
+  /// (nothing has settled yet); failed ones are rejected, since
+  /// applying them would invent money or destroy it. Transactions
+  /// that do not involve this wallet are also rejected.
+  void applyTransaction(WalletTransaction tx, String ownAddress) {
+    if (tx.status == TxStatus.pending) return;
+    if (tx.status == TxStatus.failed) {
+      throw ArgumentError('Cannot apply failed transaction ${tx.id}');
+    }
+    if (tx.type == TxType.send && tx.from == ownAddress) {
+      subtractAmount(tx.asset, tx.totalDebit);
+    } else if (tx.type == TxType.receive && tx.to == ownAddress) {
+      addAmount(tx.asset, tx.amount);
+    } else {
+      throw ArgumentError(
+        'Transaction ${tx.id} does not involve wallet $ownAddress',
+      );
+    }
+  }
 
   Map<String, Object?> toJson() => {
         'balances': balances.map((b) => b.toJson()).toList(),

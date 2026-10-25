@@ -11,7 +11,7 @@ transactions — built as a dependency-light Dart package with a CLI demo.
 - [x] Project scaffold (Dart package layout, CI, wallet model + CLI demo)
 - [x] Key management (seed phrases, key derivation, password keystore)
 - [x] Multi-asset balances (Asset, AssetBalance, Portfolio)
-- [ ] Transaction history
+- [x] Transaction history (WalletTransaction, TransactionHistory, summary, CSV)
 - [ ] Transaction building + signing
 - [ ] Local encrypted storage + import/export
 - [ ] Self-review checklist, then public
@@ -22,6 +22,7 @@ transactions — built as a dependency-light Dart package with a CLI demo.
 dart pub get
 dart test
 dart run crypto_wallet_app balances
+dart run crypto_wallet_app history
 dart run crypto_wallet_app 0x742d35Cc6634C0532925a3b844Bc454e4438f44e 1500000000000000000
 dart run crypto_wallet_app new
 dart run crypto_wallet_app derive "apple banana cherry mango lemon grape peach pear plum melon kiwi golden" 0
@@ -55,6 +56,23 @@ dart run crypto_wallet_app derive "apple banana cherry mango lemon grape peach p
   assets read as zero, and the whole portfolio round-trips through JSON.
   `dart run crypto_wallet_app balances` prints a sample portfolio
   (1.5 ETH, 250 USDC).
+
+## Transaction history
+
+- **WalletTransaction** (`lib/src/transaction.dart`): send/receive with
+  from/to addresses, asset, amount and fee (a send debits amount + fee),
+  pending/confirmed/failed status, timestamp and optional memo.
+- **TransactionHistory** (`lib/src/transaction_history.dart`): unique-id
+  storage, newest-first views, filters (asset, type, status,
+  counterparty, date range), case-insensitive memo search, paging and
+  RFC 4180 CSV export, plus JSON round-trips.
+- **HistorySummary** (`lib/src/history_summary.dart`): counts per status
+  and confirmed sent/received totals per asset (pending/failed never
+  count toward totals).
+- **Portfolio.applyTransaction** applies a confirmed transaction to
+  holdings — sends debit amount + fee, receives credit the amount;
+  pending transactions are ignored and failed ones rejected.
+  `dart run crypto_wallet_app history` prints a sample history.
 
 **Honest limits:** this is NOT BIP-39, NOT BIP-32, and NOT a real
 Ethereum address (no secp256k1, no keccak-256). Nothing derived here
