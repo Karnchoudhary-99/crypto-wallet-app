@@ -4,7 +4,8 @@
 /// deliberately strict: wrong length, bad characters, or a missing prefix
 /// are all rejected rather than silently normalised.
 class Wallet {
-  Wallet({required this.address, this.balance = 0}) {
+  Wallet({required this.address, BigInt? balance})
+      : balance = balance ?? BigInt.zero {
     if (!isValidAddress(address)) {
       throw ArgumentError('Invalid wallet address: $address');
     }
