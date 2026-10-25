@@ -14,7 +14,7 @@ transactions — built as a dependency-light Dart package with a CLI demo.
 - [x] Transaction history (WalletTransaction, TransactionHistory, summary, CSV)
 - [x] Transaction building + signing (UnsignedTransaction, builder, demo signing, nonces)
 - [x] Local storage + import/export (WalletData, WalletStorage, merge)
-- [ ] Self-review checklist, then public
+- [x] Self-review checklist, then public
 
 ## Quick start
 
