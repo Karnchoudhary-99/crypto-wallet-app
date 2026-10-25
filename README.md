@@ -12,7 +12,7 @@ transactions — built as a dependency-light Dart package with a CLI demo.
 - [x] Key management (seed phrases, key derivation, password keystore)
 - [x] Multi-asset balances (Asset, AssetBalance, Portfolio)
 - [x] Transaction history (WalletTransaction, TransactionHistory, summary, CSV)
-- [ ] Transaction building + signing
+- [x] Transaction building + signing (UnsignedTransaction, builder, demo signing, nonces)
 - [ ] Local encrypted storage + import/export
 - [ ] Self-review checklist, then public
 
@@ -23,6 +23,7 @@ dart pub get
 dart test
 dart run crypto_wallet_app balances
 dart run crypto_wallet_app history
+dart run crypto_wallet_app build "apple banana cherry mango lemon grape peach pear plum melon kiwi golden" 0 0x1111111111111111111111111111111111111111 1000000000000000000
 dart run crypto_wallet_app 0x742d35Cc6634C0532925a3b844Bc454e4438f44e 1500000000000000000
 dart run crypto_wallet_app new
 dart run crypto_wallet_app derive "apple banana cherry mango lemon grape peach pear plum melon kiwi golden" 0
@@ -73,6 +74,26 @@ dart run crypto_wallet_app derive "apple banana cherry mango lemon grape peach p
   holdings — sends debit amount + fee, receives credit the amount;
   pending transactions are ignored and failed ones rejected.
   `dart run crypto_wallet_app history` prints a sample history.
+
+## Transaction building + signing
+
+- **UnsignedTransaction** (`lib/src/unsigned_transaction.dart`): sender,
+  recipient, asset, amount, fee and nonce, with a canonical signing
+  payload covering every field and JSON round-trips.
+- **TransactionBuilder** (`lib/src/transaction_builder.dart`): fluent
+  builder with zero fee/nonce defaults and explicit errors for missing
+  required fields.
+- **SignedTransaction** (`lib/src/signing.dart`): demo signing — HMAC-SHA256
+  of the payload keyed by the private key, verified only by the same key,
+  and rejected unless the signer is the transaction's sender.
+- **NonceTracker** (`lib/src/nonce_tracker.dart`): per-address sequence
+  numbers with peek/consume/reset, so consecutive builds never reuse a nonce.
+- `dart run crypto_wallet_app build …` derives an account, builds, signs
+  and verifies a transaction; `examples/build_tx.dart` runs the full flow
+  end to end (build → sign → apply to a portfolio → record in history).
+
+Signing here is demo-grade HMAC, NOT ECDSA — it is not publicly
+verifiable and must never be used for real funds.
 
 **Honest limits:** this is NOT BIP-39, NOT BIP-32, and NOT a real
 Ethereum address (no secp256k1, no keccak-256). Nothing derived here
