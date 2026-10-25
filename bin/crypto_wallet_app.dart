@@ -3,6 +3,7 @@ import 'package:crypto_wallet_app/crypto_wallet_app.dart';
 void _printUsage() {
   print('Usage:');
   print('  dart run crypto_wallet_app <0x-address> [balance-in-wei]');
+  print('  dart run crypto_wallet_app balances');
   print('  dart run crypto_wallet_app new');
   print('  dart run crypto_wallet_app derive "<seed phrase>" <index>');
   print('');
@@ -14,6 +15,19 @@ void _printUsage() {
 void main(List<String> arguments) {
   if (arguments.isEmpty) {
     _printUsage();
+    return;
+  }
+  if (arguments[0] == 'balances') {
+    final portfolio = Portfolio();
+    portfolio.addAmount(Asset.native, BigInt.parse('1500000000000000000'));
+    portfolio.addAmount(
+      Asset(symbol: 'USDC', name: 'USD Coin', decimals: 6),
+      BigInt.from(250000000),
+    );
+    print('Sample portfolio:');
+    for (final balance in portfolio.balances) {
+      print('  ${balance.formattedAmount} ${balance.asset.symbol}');
+    }
     return;
   }
   if (arguments[0] == 'new') {

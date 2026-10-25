@@ -10,7 +10,8 @@ transactions — built as a dependency-light Dart package with a CLI demo.
 
 - [x] Project scaffold (Dart package layout, CI, wallet model + CLI demo)
 - [x] Key management (seed phrases, key derivation, password keystore)
-- [ ] Multi-asset balances + transaction history
+- [x] Multi-asset balances (Asset, AssetBalance, Portfolio)
+- [ ] Transaction history
 - [ ] Transaction building + signing
 - [ ] Local encrypted storage + import/export
 - [ ] Self-review checklist, then public
@@ -20,6 +21,7 @@ transactions — built as a dependency-light Dart package with a CLI demo.
 ```bash
 dart pub get
 dart test
+dart run crypto_wallet_app balances
 dart run crypto_wallet_app 0x742d35Cc6634C0532925a3b844Bc454e4438f44e 1500000000000000000
 dart run crypto_wallet_app new
 dart run crypto_wallet_app derive "apple banana cherry mango lemon grape peach pear plum melon kiwi golden" 0
@@ -40,6 +42,19 @@ dart run crypto_wallet_app derive "apple banana cherry mango lemon grape peach p
   as JSON with a random salt, an XOR keystream from a 1000-times
   iterated SHA-256 password key, and a SHA-256 MAC. Decryption with a
   wrong password or tampered ciphertext fails on the MAC check.
+
+## Multi-asset balances
+
+- **Asset** (`lib/src/asset.dart`): symbol, name and decimals (0–18),
+  validated on construction and JSON-serializable.
+- **AssetBalance** (`lib/src/asset_balance.dart`): an amount in the
+  asset's smallest unit, formatted per that asset's decimals, with
+  same-asset add/subtract (subtracting below zero is rejected).
+- **Portfolio** (`lib/src/portfolio.dart`): holdings keyed by symbol.
+  Repeated adds merge, subtracting to zero drops the asset, unknown
+  assets read as zero, and the whole portfolio round-trips through JSON.
+  `dart run crypto_wallet_app balances` prints a sample portfolio
+  (1.5 ETH, 250 USDC).
 
 **Honest limits:** this is NOT BIP-39, NOT BIP-32, and NOT a real
 Ethereum address (no secp256k1, no keccak-256). Nothing derived here
