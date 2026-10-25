@@ -5,6 +5,7 @@ void _printUsage() {
   print('  dart run crypto_wallet_app <0x-address> [balance-in-wei]');
   print('  dart run crypto_wallet_app balances');
   print('  dart run crypto_wallet_app history');
+  print('  dart run crypto_wallet_app build "<seed phrase>" <index> <to> <amount>');
   print('  dart run crypto_wallet_app new');
   print('  dart run crypto_wallet_app derive "<seed phrase>" <index>');
   print('');
@@ -75,6 +76,35 @@ void main(List<String> arguments) {
       'Summary: ${summary.confirmedCount} confirmed, '
       'sent ${summary.sentByAsset}, received ${summary.receivedByAsset}',
     );
+    return;
+  }
+  if (arguments[0] == 'build') {
+    if (arguments.length < 5) {
+      print(
+        'Usage: dart run crypto_wallet_app build "<seed phrase>" <index> <to> <amount>',
+      );
+      return;
+    }
+    final phrase = SeedPhrase.fromPhrase(
+      arguments.sublist(1, arguments.length - 3).join(' '),
+    );
+    final index = int.parse(arguments[arguments.length - 3]);
+    final to = arguments[arguments.length - 2];
+    final amount = BigInt.parse(arguments.last);
+    final key = DerivedKey.fromPhrase(phrase, index);
+    final tx = TransactionBuilder()
+        .from(key.address)
+        .to(to)
+        .asset(Asset.native)
+        .amount(amount)
+        .nonce(0)
+        .build();
+    final signed = SignedTransaction.sign(tx, key);
+    print('From: ${tx.from}');
+    print('To: ${tx.to}');
+    print('Amount: ${tx.amount} (fee ${tx.fee}, nonce ${tx.nonce})');
+    print('Signature: ${signed.signature}');
+    print('Verifies: ${signed.verify(key)}');
     return;
   }
   if (arguments[0] == 'new') {
