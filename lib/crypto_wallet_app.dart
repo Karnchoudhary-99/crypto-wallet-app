@@ -18,6 +18,7 @@ export 'src/unsigned_transaction.dart';
 export 'src/derivation.dart';
 export 'src/hex.dart';
 export 'src/keystore.dart';
+export 'src/nonce_tracker.dart';
 export 'src/seed_phrase.dart';
 export 'src/signing.dart';
 export 'src/wallet.dart';
