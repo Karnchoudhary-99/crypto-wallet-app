@@ -15,6 +15,7 @@ export 'src/transaction_builder.dart';
 export 'src/history_summary.dart';
 export 'src/transaction_history.dart';
 export 'src/unsigned_transaction.dart';
+export 'src/wallet_data.dart';
 export 'src/derivation.dart';
 export 'src/hex.dart';
 export 'src/keystore.dart';
