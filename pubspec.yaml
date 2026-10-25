@@ -1,0 +1,9 @@
+name: crypto_wallet_app
+description: A crypto wallet app in Dart — key management, addresses, balances and transactions.
+version: 0.1.0
+
+environment:
+  sdk: ^3.0.0
+
+dev_dependencies:
+  test: ^1.25.0
