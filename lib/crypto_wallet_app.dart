@@ -13,6 +13,7 @@ export 'src/portfolio.dart';
 export 'src/transaction.dart';
 export 'src/history_summary.dart';
 export 'src/transaction_history.dart';
+export 'src/unsigned_transaction.dart';
 export 'src/derivation.dart';
 export 'src/hex.dart';
 export 'src/keystore.dart';
