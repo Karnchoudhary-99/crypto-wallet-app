@@ -1,5 +1,4 @@
 import 'portfolio.dart';
-import 'transaction.dart';
 import 'transaction_history.dart';
 
 /// Everything a wallet needs to persist: holdings plus history.
