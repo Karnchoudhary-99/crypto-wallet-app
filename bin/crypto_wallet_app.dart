@@ -6,6 +6,7 @@ void _printUsage() {
   print('  dart run crypto_wallet_app balances');
   print('  dart run crypto_wallet_app history');
   print('  dart run crypto_wallet_app build "<seed phrase>" <index> <to> <amount>');
+  print('  dart run crypto_wallet_app store <file-path>');
   print('  dart run crypto_wallet_app new');
   print('  dart run crypto_wallet_app derive "<seed phrase>" <index>');
   print('');
@@ -105,6 +106,21 @@ void main(List<String> arguments) {
     print('Amount: ${tx.amount} (fee ${tx.fee}, nonce ${tx.nonce})');
     print('Signature: ${signed.signature}');
     print('Verifies: ${signed.verify(key)}');
+    return;
+  }
+  if (arguments[0] == 'store') {
+    if (arguments.length < 2) {
+      print('Usage: dart run crypto_wallet_app store <file-path>');
+      return;
+    }
+    final data = WalletData();
+    data.portfolio.addAmount(Asset.native, BigInt.parse('1500000000000000000'));
+    const storage = WalletStorage();
+    storage.save(data, arguments[1]);
+    final restored = storage.load(arguments[1]);
+    print('Saved and reloaded ${arguments[1]}:');
+    print('  ETH: ${restored.portfolio.balanceOf(Asset.native)}');
+    print('  Transactions: ${restored.history.length}');
     return;
   }
   if (arguments[0] == 'new') {
