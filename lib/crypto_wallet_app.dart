@@ -11,6 +11,7 @@ export 'src/asset.dart';
 export 'src/asset_balance.dart';
 export 'src/portfolio.dart';
 export 'src/transaction.dart';
+export 'src/transaction_builder.dart';
 export 'src/history_summary.dart';
 export 'src/transaction_history.dart';
 export 'src/unsigned_transaction.dart';
